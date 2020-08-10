@@ -55,55 +55,43 @@ espaço em branco. Para os cálculos da porcentagens, deve-se considerar apenas 
 
 # Exemplos
 
-Entrada
-<p>
-10 3
-1 2 3
-1 2 4
-2 1 4
-2 3 1
-3 2 1
-3 2 1
-1 3 2
-4 3 2
-2 1 3
-1 2 4
-</p>
+Entrada<br>
+10 3<br>
+1 2 3<br>
+1 2 4<br>
+2 1 4<br>
+2 3 1<br>
+3 2 1<br>
+3 2 1<br>
+1 3 2<br>
+4 3 2<br>
+2 1 3<br>
+1 2 4<br>
 
-Saída
-<p>
-1 44.44
-2 60.00
-</p>
+Saída<br>
+1 44.44<br>
+2 60.00<br>
 
-Entrada
-<p>
-7 5
-4 2 3
-3 5 6
-3 2 1
-2 3 4
-3 2 1
-3 2 1
-2 3 1
-</p>
+Entrada<br>
+7 5<br>
+4 2 3<br>
+3 5 6<br>
+3 2 1<br>
+2 3 4<br>
+3 2 1<br>
+3 2 1<br>
+2 3 1<br>
 
-Saída
-<p>
-3 57.14
-</p>
+Saída<br>
+3 57.14<br>
 
-Entrada
-<p>
-5 3
-4 4 4
-4 4 4
-4 4 4
-4 4 1
-4 4 4
-</p>
+Entrada<br>
+5 3<br>
+4 4 4<br>
+4 4 4<br>
+4 4 4<br>
+4 4 1<br>
+4 4 4<br>
 
-Saída
-<p>
-0
-</p>
+Saída<br>
+0<br>
