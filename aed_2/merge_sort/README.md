@@ -71,7 +71,7 @@ Entrada<br>
 Saída<br>
 1 44.44<br>
 2 60.00<br>
-
+___
 Entrada<br>
 7 5<br>
 4 2 3<br>
@@ -84,7 +84,7 @@ Entrada<br>
 
 Saída<br>
 3 57.14<br>
-
+___
 Entrada<br>
 5 3<br>
 4 4 4<br>
