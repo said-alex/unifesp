@@ -56,6 +56,7 @@ espaço em branco. Para os cálculos da porcentagens, deve-se considerar apenas 
 # Exemplos
 
 Entrada
+<p>
 10 3
 1 2 3
 1 2 4
@@ -67,12 +68,16 @@ Entrada
 4 3 2
 2 1 3
 1 2 4
+</p>
 
 Saída
+<p>
 1 44.44
 2 60.00
+</p>
 
 Entrada
+<p>
 7 5
 4 2 3
 3 5 6
@@ -81,17 +86,24 @@ Entrada
 3 2 1
 3 2 1
 2 3 1
+</p>
 
 Saída
+<p>
 3 57.14
+</p>
 
 Entrada
+<p>
 5 3
 4 4 4
 4 4 4
 4 4 4
 4 4 1
 4 4 4
+</p>
 
 Saída
+<p>
 0
+</p>
