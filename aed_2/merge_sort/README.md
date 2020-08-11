@@ -1,4 +1,4 @@
-# Problema 2 - AED2 - 2020 - Eleições otimizadas
+# Problema 2 - AED2 - 2020 - Eleições Otimizadas
 (Tempo Limite de execução do programa: 0,5 s)
 
 Em tempo de crise, tal qual ocorre no momento com o Covid-19, tudo que compõe orçamento de
