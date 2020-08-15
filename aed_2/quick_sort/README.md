@@ -10,34 +10,34 @@ a) primeiro elemento do intervalo considerado do vetor
 b) o elemento na posição do meio
 c) o último elemento, de acordo com o pseudo-código a seguir:
 ___
- //Escolha do Pivo por mediana de 3
- meio = (p+r)/2;
- a = A[p];
- b = A[meio];
- c = A[r];
- medianaIndice = 0; //índice da mediana (zero para inicio)
- //A sequência de if...else a seguir verifica qual é a mediana
- if (a < b)
- if (b < c) //a < b && b < c
- medianaIndice = meio;
- else
- if (a < c) //a < c && c <= b
- medianaIndice = r;
- else //c <= a && a < b
- medianaIndice = p;
- else
- if (c < b) //c < b && b <= a
- medianaIndice = meio;
- eles
- if (c < a) //b <= c && c < a
- medianaIndice = r;
- else //b <= a && a <= c
- medianaIndice = p;
- //coloca o elemento da mediana no fim para poder usar o
- //Quicksort do Cormen
- trocar(A, medianaIndice, r)
- //Restante do código do algoritmo de particao (Cormen)
- ...
+ //Escolha do Pivo por mediana de 3<br>
+ meio = (p+r)/2;<br>
+ a = A[p];<br>
+ b = A[meio];<br>
+ c = A[r];<br>
+ medianaIndice = 0; //índice da mediana (zero para inicio)<br>
+ //A sequência de if...else a seguir verifica qual é a mediana<br>
+ if (a < b)<br>
+  if (b < c) //a < b && b < c<br>
+    medianaIndice = meio;<br>
+  else<br>
+    if (a < c) //a < c && c <= b<br>
+      medianaIndice = r;<br>
+    else //c <= a && a < b<br>
+      medianaIndice = p;<br>
+ else<br>
+  if (c < b) //c < b && b <= a<br>
+    medianaIndice = meio;<br>
+  else<br>
+    if (c < a) //b <= c && c < a<br>
+      medianaIndice = r;<br>
+    else //b <= a && a <= c<br>
+      medianaIndice = p;<br>
+ //coloca o elemento da mediana no fim para poder usar o<br>
+ //Quicksort do Cormen<br>
+ trocar(A, medianaIndice, r)<br>
+ //Restante do código do algoritmo de particao (Cormen)<br>
+ ...<br>
  ___
 Você deve implementar um programa que leia da entrada um conjunto de
 informações sobre N pessoas contendo o nome de cada pessoa com até 15
