@@ -36,5 +36,12 @@ O interpretador de comandos deverá:
 
 ###### Video-apresentação.
 O vídeo deverá:
-1. Apresentar explicação do trabalho desenvolvido: o que, como e porque foi feito da forma como foi.  Atentem-se: (a) TODOS os integrantes do grupo devem apresentar; (b) o tempo de exposição de vídeo é em torno de 20min e deve ser dividido de forma igualitária, por exemplo, em um grupo de 3 alunos, cada teria entre 6min e 7min de fala.
-2. Descrever de forma objetiva as contribuições de cada integrante do grupo no trabalho. iii. Apresentar uma auto-avaliação do grupo sobre o trabalho realizado.
+
+1. Apresentar explicação do trabalho desenvolvido: o que, como e porque foi feito da forma como foi. Atentem-se: <br>
+(a) TODOS os integrantes do grupo devem apresentar;
+<br>
+(b) o tempo de exposição de vídeo é em torno de 20min e deve ser dividido de forma igualitária, por exemplo, em um grupo de 3 alunos, cada teria entre 6min e 7min de fala.
+
+2. Descrever de forma objetiva as contribuições de cada integrante do grupo no trabalho.
+
+3. Apresentar uma auto-avaliação do grupo sobre o trabalho realizado.
