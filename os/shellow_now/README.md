@@ -21,14 +21,14 @@ O interpretador de comandos deverá:
 `ls -la`
 
 2. Executar comandos encadeados, utilizando o operador pipe “|” para combinar saída e entrada entre os comandos. Exemplo:<br>
-`ls -la | grep “teste”`
+`ls -la | grep “teste”`<br>
 `cat /proc/cpuinfo | grep "model name" | wc -l`
 
 3. Executar sequências de comandos independentes com o operador “;”. Exemplo:<br>
 `echo “SO 2021” ; echo “ADE Viva!”`
 
 4. Executar comandos condicionados com operadores OR (||) e AND (&&). Exemplo:<br>
-`cat 12345 || echo "aquivo inexistente"`
+`cat 12345 || echo "aquivo inexistente"`<br>
 `ping -c1 www.unifesp.br.br && echo "SERVIDOR DISPONIVEL" || echo "SERVIDOR INDISPONIVEL"`
 
 5. Executar comandos em background, liberando o shell para receber novos comandos do usuário. Exemplo:<br>
