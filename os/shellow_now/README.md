@@ -17,21 +17,21 @@ Cópias (entre grupos e/ou de fontes da Internet) implicam em anulação.
 ###### Requisitos do protótipo
 O interpretador de comandos deverá:
 
-1. Executar comandos unitários, com múltiplos parâmetros. Exemplo:
+1. Executar comandos unitários, com múltiplos parâmetros. Exemplo:<br>
 `ls -la`
 
-2. Executar comandos encadeados, utilizando o operador pipe “|” para combinar saída e entrada entre os comandos. Exemplo:
+2. Executar comandos encadeados, utilizando o operador pipe “|” para combinar saída e entrada entre os comandos. Exemplo:<br>
 `ls -la | grep “teste”`
 `cat /proc/cpuinfo | grep "model name" | wc -l`
 
-3. Executar sequências de comandos independentes com o operador “;”. Exemplo:
+3. Executar sequências de comandos independentes com o operador “;”. Exemplo:<br>
 `echo “SO 2021” ; echo “ADE Viva!”`
 
-4. Executar comandos condicionados com operadores OR (||) e AND (&&). Exemplo:
+4. Executar comandos condicionados com operadores OR (||) e AND (&&). Exemplo:<br>
 `cat 12345 || echo "aquivo inexistente"`
 `ping -c1 www.unifesp.br.br && echo "SERVIDOR DISPONIVEL" || echo "SERVIDOR INDISPONIVEL"`
 
-5. Executar comandos em background, liberando o shell para receber novos comandos do usuário. Exemplo:
+5. Executar comandos em background, liberando o shell para receber novos comandos do usuário. Exemplo:<br>
 `ping -c5 www.unifesp.br &`
 
 ###### Video-apresentação.
