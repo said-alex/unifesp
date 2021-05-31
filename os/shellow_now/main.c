@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define TOTAL_CMD_FLOW 3
+#define TOTAL_CMD_FLOW 4
 
 typedef struct ShellInput {
   char*  flow;
@@ -13,11 +13,23 @@ typedef struct ShellInput {
   char** nextArgs;
 } ShellInput;
 
-enum CMD_FLOWS { SEQ, AND, OR };
+enum CMD_FLOWS { SEQ, AND, OR, BG };
 
-const char* FLOW_TOKENS[TOTAL_CMD_FLOW] = { ";", "&&", "||" };
+const char* FLOW_TOKENS[TOTAL_CMD_FLOW] = { ";", "&&", "||", "&" };
 
-void exitWithMsg(char* msg, int exit_status) { puts(msg); exit(exit_status); }
+void exitWithMsg(char* msg, int exit_status) {
+  puts(msg);
+  exit(exit_status);
+}
+
+int isFlowToken(char* token) {
+  return !(
+    strcmp(token, FLOW_TOKENS[SEQ]) &&
+    strcmp(token, FLOW_TOKENS[AND]) &&
+    strcmp(token, FLOW_TOKENS[OR])  &&
+    strcmp(token, FLOW_TOKENS[BG])
+  );
+}
 
 void initializeShellInputState(ShellInput* input, char** args) {
   input->flow = NULL;
@@ -34,13 +46,7 @@ void updateShellInputState(ShellInput* input) {
     input->nextArgs = NULL;
 
     while(argsAux && *argsAux) {
-      int isFlowToken = !(
-        strcmp(*argsAux, FLOW_TOKENS[SEQ]) &&
-        strcmp(*argsAux, FLOW_TOKENS[AND]) &&
-        strcmp(*argsAux, FLOW_TOKENS[OR])
-      );
-
-      if (isFlowToken) {
+      if (isFlowToken(*argsAux)) {
         input->flow = *argsAux;
         *argsAux = NULL;
         input->nextArgs = argsAux + 1;
@@ -52,15 +58,19 @@ void updateShellInputState(ShellInput* input) {
 }
 
 void handleChildProcess(pid_t pid, ShellInput* input) {
+  if (input->flow && strcmp(input->flow, FLOW_TOKENS[BG])) return;
+
   int status;
 
   waitpid(pid, &status, 0);
 
   if (input->flow && strcmp(input->flow, FLOW_TOKENS[SEQ])) {
     if (status == 0)
-      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[OR])) updateShellInputState(input);
+      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[OR]))
+        updateShellInputState(input);
     else
-      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[AND])) updateShellInputState(input);
+      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[AND]))
+        updateShellInputState(input);
   }
 }
 
