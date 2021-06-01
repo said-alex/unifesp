@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define TOTAL_CMD_FLOW 4
+#define TOTAL_CMD_FLOW 5
 
 typedef struct ShellInput {
   char*  flow;
@@ -13,21 +13,17 @@ typedef struct ShellInput {
   char** nextArgs;
 } ShellInput;
 
-enum CMD_FLOWS { SEQ, AND, OR, BG };
+enum CMD_FLOWS { SEQ, AND, OR, BG, PP };
 
-const char* FLOW_TOKENS[TOTAL_CMD_FLOW] = { ";", "&&", "||", "&" };
+const char* FLOW_TOKENS[TOTAL_CMD_FLOW] = { ";", "&&", "||", "&", "|" };
 
-void exitWithMsg(char* msg, int exit_status) {
-  puts(msg);
-  exit(exit_status);
-}
-
-int isFlowToken(char* token) {
+int isFlowToken(const char* token) {
   return !(
     strcmp(token, FLOW_TOKENS[SEQ]) &&
     strcmp(token, FLOW_TOKENS[AND]) &&
     strcmp(token, FLOW_TOKENS[OR])  &&
-    strcmp(token, FLOW_TOKENS[BG])
+    strcmp(token, FLOW_TOKENS[BG])  &&
+    strcmp(token, FLOW_TOKENS[PP])
   );
 }
 
@@ -57,21 +53,65 @@ void updateShellInputState(ShellInput* input) {
   }
 }
 
-void handleChildProcess(pid_t pid, ShellInput* input) {
-  if (input->flow && strcmp(input->flow, FLOW_TOKENS[BG])) return;
+int isSequentialToken(const char* token) {
+  return token && !strcmp(token, FLOW_TOKENS[SEQ]);
+}
 
+int isAndToken(const char* token) {
+  return token && !strcmp(token, FLOW_TOKENS[AND]);
+}
+
+int isOrToken(const char* token) {
+  return token && !strcmp(token, FLOW_TOKENS[OR]);
+}
+
+int isBackgroundToken(const char* token) {
+  return token && !strcmp(token, FLOW_TOKENS[BG]);
+}
+
+int isPipeToken(const char* token) {
+  return token && !strcmp(token, FLOW_TOKENS[PP]);
+}
+
+void exitWithMsg(char* msg, int exit_status) { // Não vamos precisar disso quando implementarmos o interpretador
+  puts(msg);
+  exit(exit_status);
+}
+
+int waitForChildStatus(pid_t pid) {
   int status;
 
   waitpid(pid, &status, 0);
 
-  if (input->flow && strcmp(input->flow, FLOW_TOKENS[SEQ])) {
-    if (status == 0)
-      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[OR]))
-        updateShellInputState(input);
-    else
-      while (input->flow && !strcmp(input->flow, FLOW_TOKENS[AND]))
-        updateShellInputState(input);
+  return status;
+}
+
+void setupFileDescriptor(int* fileDescriptor, int file) {
+  dup2(fileDescriptor[file], file);
+  close(fileDescriptor[file]);
+  close(fileDescriptor[file ? 0 : 1]);
+}
+
+void handleChildProcess(ShellInput* input, int* fileDescriptor) {
+  if (isPipeToken(input->flow)) setupFileDescriptor(fileDescriptor, STDOUT_FILENO);
+
+  exit(execvp(input->currentArgs[0], input->currentArgs));
+}
+
+void handleMainProcess(pid_t pid, ShellInput* input, int* fileDescriptor) {
+  if (isBackgroundToken(input->flow)) return;
+
+  if (isPipeToken(input->flow)) {
+    setupFileDescriptor(fileDescriptor, STDIN_FILENO);
+    return;
   }
+
+  int status = waitForChildStatus(pid);
+
+  if (isSequentialToken(input->flow)) return;
+
+  if (status) while (isAndToken(input->flow)) updateShellInputState(input);
+  else while (isOrToken(input->flow)) updateShellInputState(input);
 }
 
 int main(int argsCount, char** args) {
@@ -79,20 +119,21 @@ int main(int argsCount, char** args) {
     exitWithMsg("Nenhum comando foi passado.", EXIT_FAILURE);
 
   ShellInput input;
-
   initializeShellInputState(&input, ++args);
+
+  int fileDescriptor[2];
 
   while (input.nextArgs) {
     updateShellInputState(&input);
 
+    if (isPipeToken(input.flow) && (pipe(fileDescriptor) < 0))
+      exitWithMsg("pipe() falhou inesperadamente.", EXIT_FAILURE);
+
     pid_t pid = fork();
 
-    if (pid == 0)
-      exit(execvp(input.currentArgs[0], input.currentArgs));
-    else if (pid > 0)
-      handleChildProcess(pid, &input);
-    else
-      exitWithMsg("fork() falhou inesperadamente.", EXIT_FAILURE);
+    if (pid == 0) handleChildProcess(&input, fileDescriptor);
+    else if (pid > 0) handleMainProcess(pid, &input, fileDescriptor);
+    else exitWithMsg("fork() falhou inesperadamente.", EXIT_FAILURE);
   }
 
   exit(EXIT_SUCCESS);
