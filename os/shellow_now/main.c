@@ -1,140 +1,70 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include "shell_input.h"
 
-#define TOTAL_CMD_FLOW 5
+#define INPUT_MSG "[juntos&shellowNow]=>$ "
+#define BUFFER_SIZE 256
 
-typedef struct ShellInput {
-  char*  flow;
-  char** currentArgs;
-  char** nextArgs;
-} ShellInput;
+char** getInputArgs();
+void freeInputArgs(char**);
 
-enum CMD_FLOWS { SEQ, AND, OR, BG, PP };
+int main () {
+  char** inputArgs = NULL;
+  int isToRun = 1;
+  pid_t pid;
 
-const char* FLOW_TOKENS[TOTAL_CMD_FLOW] = { ";", "&&", "||", "&", "|" };
+  while (isToRun) {
+    printf(INPUT_MSG);
+    inputArgs = getInputArgs();
+    pid = fork();
 
-int isFlowToken(const char* token) {
-  return !(
-    strcmp(token, FLOW_TOKENS[SEQ]) &&
-    strcmp(token, FLOW_TOKENS[AND]) &&
-    strcmp(token, FLOW_TOKENS[OR])  &&
-    strcmp(token, FLOW_TOKENS[BG])  &&
-    strcmp(token, FLOW_TOKENS[PP])
-  );
-}
-
-void initializeShellInputState(ShellInput* input, char** args) {
-  input->flow = NULL;
-  input->currentArgs = NULL;
-  input->nextArgs = args;
-}
-
-void updateShellInputState(ShellInput* input) {
-  input->currentArgs = input->nextArgs;
-
-  if (input->currentArgs) {
-    char** argsAux = input->currentArgs;
-    input->flow = NULL;
-    input->nextArgs = NULL;
-
-    while(argsAux && *argsAux) {
-      if (isFlowToken(*argsAux)) {
-        input->flow = *argsAux;
-        *argsAux = NULL;
-        input->nextArgs = argsAux + 1;
-      } else {
-        argsAux++;
-      }
+    if (pid == 0) return processShellInput(inputArgs);
+    else if (pid > 0) waitpid(pid, NULL, 0);
+    else {
+      puts("fork() falhou inesperadamente.");
+      return EXIT_FAILURE;
     }
-  }
-}
 
-int isSequentialToken(const char* token) {
-  return token && !strcmp(token, FLOW_TOKENS[SEQ]);
-}
-
-int isAndToken(const char* token) {
-  return token && !strcmp(token, FLOW_TOKENS[AND]);
-}
-
-int isOrToken(const char* token) {
-  return token && !strcmp(token, FLOW_TOKENS[OR]);
-}
-
-int isBackgroundToken(const char* token) {
-  return token && !strcmp(token, FLOW_TOKENS[BG]);
-}
-
-int isPipeToken(const char* token) {
-  return token && !strcmp(token, FLOW_TOKENS[PP]);
-}
-
-void exitWithMsg(char* msg, int exit_status) { // Não vamos precisar disso quando implementarmos o interpretador
-  puts(msg);
-  exit(exit_status);
-}
-
-int waitForChildStatus(pid_t pid) {
-  int status;
-
-  waitpid(pid, &status, 0);
-
-  return status;
-}
-
-void setupFileDescriptor(int* fileDescriptor, int file) {
-  dup2(fileDescriptor[file], file);
-  close(fileDescriptor[file]);
-  close(fileDescriptor[file ? 0 : 1]);
-}
-
-void handleChildProcess(ShellInput* input, int* fileDescriptor) {
-  if (isPipeToken(input->flow)) setupFileDescriptor(fileDescriptor, STDOUT_FILENO);
-
-  exit(execvp(input->currentArgs[0], input->currentArgs));
-}
-
-void handleMainProcess(pid_t pid, ShellInput* input, int* fileDescriptor) {
-  if (isBackgroundToken(input->flow)) return;
-
-  if (isPipeToken(input->flow)) {
-    setupFileDescriptor(fileDescriptor, STDIN_FILENO);
-    return;
+    freeInputArgs(inputArgs);
   }
 
-  int status = waitForChildStatus(pid);
-
-  if (isSequentialToken(input->flow)) return;
-
-  if (status) while (isAndToken(input->flow)) updateShellInputState(input);
-  else while (isOrToken(input->flow)) updateShellInputState(input);
+  return 0;
 }
 
-int main(int argsCount, char** args) {
-  if (argsCount <= 1)
-    exitWithMsg("Nenhum comando foi passado.", EXIT_FAILURE);
+char** getInputArgs() {
+  int i = 0, j = 0, flag = 1;
+  char** inputArgs = NULL;
+  char buffer[BUFFER_SIZE];
 
-  ShellInput input;
-  initializeShellInputState(&input, ++args);
+  bzero(buffer, BUFFER_SIZE);
 
-  int fileDescriptor[2];
+  while (flag && (buffer[j] = getchar())) {
+    if (buffer[j] == ' ' || buffer[j] == '\n') {
+      inputArgs = (char**)realloc(inputArgs, ((i + 1) * sizeof(char*)));
+      inputArgs[i] = (char*)malloc((j + 1) * sizeof(char));
 
-  while (input.nextArgs) {
-    updateShellInputState(&input);
+      if (buffer[j] == '\n') flag = 0;
 
-    if (isPipeToken(input.flow) && (pipe(fileDescriptor) < 0))
-      exitWithMsg("pipe() falhou inesperadamente.", EXIT_FAILURE);
+      buffer[j] = '\0';
 
-    pid_t pid = fork();
+      strcpy(inputArgs[i], buffer);
 
-    if (pid == 0) handleChildProcess(&input, fileDescriptor);
-    else if (pid > 0) handleMainProcess(pid, &input, fileDescriptor);
-    else exitWithMsg("fork() falhou inesperadamente.", EXIT_FAILURE);
+      i++;
+      j = -1;
+    }
+
+    j++;
   }
 
-  exit(EXIT_SUCCESS);
+  inputArgs = (char**)realloc(inputArgs, ((i + 1) * sizeof(char*)));
+  inputArgs[i] = NULL;
+
+  return inputArgs;
+}
+
+void freeInputArgs(char** inputArgs) {
+  int i;
+  for (i = 0; inputArgs[i]; i++) free(inputArgs[i]);
+  if (inputArgs) free(inputArgs);
 }
