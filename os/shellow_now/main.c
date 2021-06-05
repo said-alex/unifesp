@@ -1,8 +1,3 @@
-/* Integrantes:
-    Alex Bizerra Dias (133568);
-    Wendell Oliveira da Silva (133750).
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +6,6 @@
 #define INPUT_MSG "[juntos&shellowNow]=>$ "
 #define BUFFER_SIZE 256
 
-// Protótipos
 // Captura a entrada transformando numa matriz de argumentos
 char** getInputArgs();
 // Limpa a entrada transformando numa matriz de argumentos
