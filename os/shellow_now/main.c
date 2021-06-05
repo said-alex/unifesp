@@ -1,3 +1,8 @@
+/* Integrantes:
+    Alex Bizerra Dias (133568);
+    Wendell Oliveira da Silva (133750).
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +11,10 @@
 #define INPUT_MSG "[juntos&shellowNow]=>$ "
 #define BUFFER_SIZE 256
 
+// Protótipos
+// Captura a entrada transformando numa matriz de argumentos
 char** getInputArgs();
+// Limpa a entrada transformando numa matriz de argumentos
 void freeInputArgs(char**);
 
 int main () {
@@ -19,8 +27,10 @@ int main () {
     inputArgs = getInputArgs();
     pid = fork();
 
-    if (pid == 0) return processShellInput(inputArgs);
-    else if (pid > 0) waitpid(pid, NULL, 0);
+    if (pid == 0)
+      return processShellInput(inputArgs);
+    else if (pid > 0)
+      waitpid(pid, NULL, 0);
     else {
       puts("fork() falhou inesperadamente.");
       return EXIT_FAILURE;
@@ -29,7 +39,7 @@ int main () {
     freeInputArgs(inputArgs);
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 char** getInputArgs() {
@@ -39,7 +49,7 @@ char** getInputArgs() {
 
   bzero(buffer, BUFFER_SIZE);
 
-  while (flag && (buffer[j] = getchar())) {
+  while (flag && (buffer[j] = getchar()) != EOF) {
     if (buffer[j] == ' ' || buffer[j] == '\n') {
       inputArgs = (char**)realloc(inputArgs, ((i + 1) * sizeof(char*)));
       inputArgs[i] = (char*)malloc((j + 1) * sizeof(char));
@@ -65,6 +75,10 @@ char** getInputArgs() {
 
 void freeInputArgs(char** inputArgs) {
   int i;
-  for (i = 0; inputArgs[i]; i++) free(inputArgs[i]);
-  if (inputArgs) free(inputArgs);
+
+  for (i = 0; inputArgs[i]; i++)
+    free(inputArgs[i]);
+
+  if (inputArgs)
+    free(inputArgs);
 }
