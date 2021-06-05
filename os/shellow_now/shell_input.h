@@ -1,3 +1,6 @@
+#ifndef SHELL_INPUT_H
+#define SHELL_INPUT_H 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -158,3 +161,5 @@ int processShellInput(char** args) {
 
   return EXIT_SUCCESS;
 }
+
+#endif
