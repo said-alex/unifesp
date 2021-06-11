@@ -8,7 +8,7 @@
 
 // Captura a entrada transformando numa matriz de argumentos
 char** getInputArgs();
-// Limpa a entrada transformando numa matriz de argumentos
+// Libera a memória alocada para a matriz de argumentos
 void freeInputArgs(char**);
 
 int main () {

@@ -2,68 +2,64 @@
 
 using namespace std;
 
-void merge_sort(int[], int, int);
-void merge(int[], int, int, int);
+void merge_sort(int[], int, int, int[]);
+void merge(int[], int, int, int, int[]);
+void print_ary(int[], int);
+
+int N;
+int K;
+int k;
 
 int main() {
-  int ary[] = {9,5,4,2,8,7,3,6,1};
+  cin >> N;
+  cin >> K;
+  int ary[N];
+  int ary2[N];
 
-  merge_sort(ary, 0, 8);
+  for (int i = 0; i < N; i++) cin >> ary[i];
 
-  for (int i = 0; i < 9; i++)
-    cout << ary[i] << " ";
+  merge_sort(ary, 0, 4, ary2);
+
+  cout << K << endl;
 
   return 0;
 }
 
-void merge_sort(int ary[], int l_index, int r_index)
-{
-  if (l_index >= r_index) return;
+void print_ary(int ary[], int len) {
+  for (int i = 0; i < len; i++)
+    cout << ary[i] << " ";
 
-  int m_index = (l_index + r_index) / 2;
-
-  merge_sort(ary, l_index, m_index);
-  merge_sort(ary, (m_index + 1), r_index);
-  merge(ary, l_index, m_index, r_index);
+  cout << endl;
 }
 
-void merge(int ary[], int l_index, int m_index, int r_index) {
-  int first_half_size = m_index - l_index + 1;
-  int sec_half_size = r_index - m_index;
+void merge_sort(int vetor[], int inicio, int fim, int vetorAux[]) {
+  if ((inicio < fim) and (vetor[inicio] > (K * vetor[fim]))) k++;
+  if ((fim - inicio) < 2) return;
 
-  int *l_ary = new int[first_half_size*sizeof(int)];
-  int *r_ary = new int[sec_half_size*sizeof(int)];
 
-  for (int i = 0; i < first_half_size; i++) l_ary[i] = ary[l_index + i];
-  for (int j = 0; j < sec_half_size; j++) r_ary[j] = ary[m_index + 1 + j];
+  int meio = ((inicio + fim)/2);
 
-  int i, j = 0, k = l_index;
+  merge_sort(vetor, inicio, meio, vetorAux);
+  merge_sort(vetor, meio, fim, vetorAux);
+  merge(vetor, inicio, meio, fim, vetorAux);
+}
 
-  while (i < first_half_size && j < sec_half_size) {
-    if (l_ary[i] <= r_ary[j]) {
-      ary[k] = l_ary[i];
-      i++;
+void merge(int vetor[], int ini, int meio, int fim, int vetAux[]) {
+  int esq = ini;
+  int dir = meio;
+
+  for (int i = ini; i < fim; ++i) {
+    if ((esq < meio) and ((dir >= fim) or (vetor[esq] < vetor[dir]))) {
+        vetAux[i] = vetor[esq];
+        ++esq;
     }
     else {
-      ary[k] = r_ary[j];
-      j++;
+        vetAux[i] = vetor[dir];
+        ++dir;
     }
-
-    k++;
   }
 
-  while (i < first_half_size) {
-    ary[k] = l_ary[i];
-    i++;
-    k++;
+  for (int i = ini; i < fim; ++i) {
+    vetor[i] = vetAux[i];
   }
-
-  while (j < sec_half_size) {
-    ary[k] = r_ary[j];
-    j++;
-    k++;
-  }
-
-  delete l_ary;
-  delete r_ary;
 }

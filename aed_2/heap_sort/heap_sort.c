@@ -6,12 +6,12 @@ typedef struct {
   int lenght;
 } Array;
 
-void heap_sort(Array*);
 void build_max_heap(Array*);
 int  heap_extract_max(Array*);
+void heap_sort(Array*);
 void max_heapfy(Array*, int);
-void swap(Array*, int, int);
 void print_ary(Array*);
+void swap(Array*, int, int);
 
 int main() {
   Array ary;
@@ -22,7 +22,7 @@ int main() {
 
   int i;
   for (i = 0; i < ary.lenght; i++)
-    scanf("%d", &ary.item[i]);;
+    scanf("%d", &ary.item[i]);
 
   heap_sort(&ary);
   free(ary.item);
@@ -95,5 +95,6 @@ void print_ary(Array* ary) {
   int i;
   for (i = 0; i < ary->lenght; i++)
     printf("%d ", ary->item[i]);
+
   puts("");
 }
